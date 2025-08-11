@@ -1,10 +1,14 @@
 import './App.css'
-import {useState} from 'react';
+
 import '@mantine/core/styles.css';
-import { MantineProvider, createTheme, Stack, Title, Container, Input, Paper, NativeSelect, Button } from '@mantine/core';
+import { MantineProvider, createTheme,Paper, Group, CloseButton, Card, Box, Stack, Title, Container, Input, NativeSelect, Button } from '@mantine/core';
 import type { MantineColorsTuple } from '@mantine/core';
 import 'katex/dist/katex.min.css';
-import { BlockMath } from 'react-katex';
+import { useState } from 'react';
+import { Code } from '@mantine/core';
+
+
+import { MathJaxContext, MathJax } from 'better-react-mathjax'; 
 
 
 
@@ -22,6 +26,22 @@ const myColor: MantineColorsTuple = [
   '#4da91b',
   '#3d920d'
 ];
+
+
+const config = {
+  loader: { load: ["[tex]/html"] },
+  tex: {
+    packages: { "[+]": ["html"] },
+    inlineMath: [
+      ["$", "$"],
+      ["\\(", "\\)"]
+    ],
+    displayMath: [
+      ["$$", "$$"],
+      ["\\[", "\\]"]
+    ]
+  }
+};
 
 
 const theme = createTheme({
@@ -43,9 +63,8 @@ export default function App() {
 
   const generateExercise = async () => {
   setLoading(true);
-  setLatexOutput('')
-
-  const generatedOutput =  await fetch('https://ai.hackclub.com/chat/completions', {
+  setLatexOutput('');
+  const generatedOutput =  await fetch('https://ai.hackclub.com/chat/completions?t=${Date.now()}', {
   method: 'POST',
   cache: 'no-store',
   headers: {
@@ -57,29 +76,40 @@ export default function App() {
       {
         'role': 'user',
         'content': `
-      Generate a math exercise in KaTeX-compatible LaTeX for a ${gradeInput} student studying ${subjectInput}.
+      Generate a math exercise in MathJax-compatible LaTeX for a ${gradeInput} student studying ${subjectInput}.
 
       **Rules:**
       - Output ONLY the LaTeX code. No extra text, explanations, or markdown.
       - Do not use complex environments like \\begin{...} or \\end{...}.
-      - Do not wrap the output in \\[...\\] or $$...$$.
       - Use standard commands like \\text{}, \\frac{}, \\sqrt{}, etc.
-      - Don't use \cdot
+      - specify the task
+      - you must generate it and you must not take it from anywhere 
+      - it needs to be different from ${latexOutput}
+      - ** you must break the text by making new lines to make it fit into a 800px container *
       - It needs to be original 
+      - Use "\\[", "\\]" or "$$ $$"
+      - It needs to be compatible with mathjax
       **Example of a good response:**
-      \\text{Solve for } x: \\quad 5x - 3 = 2(2x + 1) - 4.
+     \\[\\sum_{n = 100}^{1000}\\left(\\frac{10\\sqrt{n}}{n}\\right)\\]
     `
       }
     ],
-    'model': 'openai/gpt-oss-120b'
+    'model': 'openai/gpt-oss-120b',
+    'temperature': 1.5
+
   })
 });
-
+let output = ''
+if (subjectInput){
 const data = await generatedOutput.json();
-let output = data.choices?.[0].message?.content || '';
-output = output
+ output = data.choices?.[0].message?.content || '';
+} else{
+   output = 'Error: Please Insert a subject';
+  
+}
 setLoading(false);
 setLatexOutput(output);
+
   }
 
 
@@ -87,34 +117,40 @@ setLatexOutput(output);
 
   
 
-  return (<MantineProvider theme={theme}>
-
-          <Container size='sm' py={'xl'}>
-          <Stack
-      bg="var(--mantine-color-body)"
-      gap="lg"
-    >
+  return ( <MathJaxContext version={3} config={config}><MantineProvider theme={theme}>
+<Stack gap="xl" 
+>
           <Title>Problems Generator</Title>
-          <NativeSelect label="Grade" value={gradeInput} onChange={handleGradeChange} description="Which grade are you in?" radius="md" data={['9th grade', '10th grade', '11th grade', "Undergraduate", "Postgraduate"]} />
-     <Input size="md" radius="md" value={subjectInput} onChange={handleSubjectChange} placeholder='What are you studying?'></Input>
-    
-     <Button loading={loading} onClick={generateExercise}  size="md" style={{
-      minHeight: '80px',
-      width: '100%'
-     }}> Generate</Button>
+          <Container  style={{
+            justifyContent: 'center',
+            width: '300px',
+          }}>
+          <NativeSelect label="Grade" value={gradeInput} onChange={handleGradeChange} description="Which grade are you in?" radius="md" data={['9th grade', '10th grade', '11th grade', "Undergraduate", "Postgraduate"]}
+          style={{marginBottom: '10px'}} />
+      
+     <Input size="md" width='md' style={{
+marginBottom: '10px', }} radius="md" value={subjectInput} onChange={handleSubjectChange} placeholder='What are you studying?'></Input>
 
-     <Paper shadow="md"  radius="lg" withBorder p="lg" style={{
-      width:'100%',
-      maxWidth: 500,
-      wordBreak: 'break-word',
-      overflowX: 'auto',
+     <Button loading={loading} onClick={generateExercise}  size="lg" radius="lg" >
+       Generate</Button>
+</Container>
+
+     <Card shadow="md"  radius="lg" withBorder p="lg" style={{
+      maxWidth: '900px',
+  overflowWrap: 'break-word',
+  overflowX: 'auto',
+  textAlign: 'center',
       minHeight: '80px',
+      alignItems: 'center',
+      justifyContent: 'center',
+      wordBreak: 'break-word',
       whiteSpace: 'pre-wrap',
       boxSizing: 'border-box'
      }}>
-      <BlockMath>{latexOutput}</BlockMath>
-     </Paper>
+      <MathJax>{latexOutput}</MathJax>
+     </Card>
+
     
-     </Stack></Container>
-    </MantineProvider>);
+ </Stack>   
+    </MantineProvider></MathJaxContext>);
 }
