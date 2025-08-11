@@ -1,11 +1,11 @@
 import './App.css'
 
 import '@mantine/core/styles.css';
-import { MantineProvider, createTheme,Paper, Group, CloseButton, Card, Box, Stack, Title, Container, Input, NativeSelect, Button } from '@mantine/core';
+import { MantineProvider, createTheme,  Card, Stack, Title, Container, Input, NativeSelect, Button } from '@mantine/core';
 import type { MantineColorsTuple } from '@mantine/core';
 import 'katex/dist/katex.min.css';
 import { useState } from 'react';
-import { Code } from '@mantine/core';
+
 
 
 import { MathJaxContext, MathJax } from 'better-react-mathjax'; 
