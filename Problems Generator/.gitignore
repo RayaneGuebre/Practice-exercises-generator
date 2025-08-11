@@ -22,3 +22,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+/workspaces/Practice-exercises-generator/Problems Generator/package-lock.json
