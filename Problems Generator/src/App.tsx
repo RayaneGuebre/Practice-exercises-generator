@@ -1,9 +1,12 @@
 import './App.css'
 
 import '@mantine/core/styles.css';
-import { MantineProvider, createTheme, Card, Stack, Title, Container, Input, NativeSelect, Button } from '@mantine/core';
+import { MantineProvider, createTheme,  Card, Stack, Title, Container, Input, NativeSelect, Button } from '@mantine/core';
 import type { MantineColorsTuple } from '@mantine/core';
 import { useState } from 'react';
+
+
+
 import { MathJaxContext, MathJax } from 'better-react-mathjax'; 
 
 
