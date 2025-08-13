@@ -146,7 +146,7 @@ marginBottom: '10px', }} radius="md" value={subjectInput} onChange={handleSubjec
       whiteSpace: 'pre-wrap',
       boxSizing: 'border-box'
      }}>
-      <MathJax>{latexOutput}</MathJax>
+      <MathJax dinamic>{latexOutput}</MathJax>
      </Card>
 
     
