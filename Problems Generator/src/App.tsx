@@ -82,12 +82,12 @@ export default function App() {
       - Do not use complex environments like \\begin{...} or \\end{...}.
       - Use standard commands like \\text{}, \\frac{}, \\sqrt{}, etc.
       - specify the task
-      - you must generate it and you must not take it from anywhere 
+      - You must generate it, and you must not take it from anywhere 
       - it needs to be different from ${latexOutput}
-      - ** you must break the text by making new lines to make it fit into a 800px container *
+      - ** You must make new lines to make the text fit into an 800px container **
       - It needs to be original 
       - Use "\\[", "\\]" or "$$ $$"
-      - It needs to be compatible with mathjax
+      - It needs to be compatible with MathJax
       **Example of a good response:**
      \\[\\sum_{n = 100}^{1000}\\left(\\frac{10\\sqrt{n}}{n}\\right)\\]
     `
